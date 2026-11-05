@@ -5,318 +5,326 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AutoPilot Drift — Remote Control AI Steering Console</title>
 <meta name="description" content="The remote control bridge for autonomous agent workflows. Monitor drift, inspect anomalies in real-time, and manually steer runaway pipelines before errors ship." />
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#F4F3EE; --lime:#D4F076; --lime-d:#182215; --forest:#152016;
-    --forest2:#1e2b1f; --card:#ffffff; --line:#e5e0d3; --muted:#6b7161;
-    --amber:#e8a33d; --red:#d64545; --green:#2f9e5f;
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { sand:'#F4F3EE', lime:'#D4F076', forest:'#152016', muted3:'#3F4E40', line:'#E5E3D8', softline:'#F0EFEA' },
+      fontFamily: { serif:['Newsreader','Playfair Display','Georgia','serif'], sans:['Plus Jakarta Sans','Inter','system-ui','sans-serif'] }
+    }
   }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:var(--bg);color:var(--forest);font-family:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
-  .serif{font-family:'Fraunces','Newsreader',Georgia,'Times New Roman',serif}
-  ::selection{background:var(--lime);color:var(--lime-d)}
-  a{text-decoration:none;color:inherit}
-  button{font-family:inherit;cursor:pointer}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-  /* header */
-  header{position:sticky;top:14px;z-index:50;margin:14px auto 0;max-width:1180px;padding:0 20px}
-  .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;background:rgba(255,255,255,.82);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:999px;padding:10px 12px 10px 18px;box-shadow:0 8px 30px rgba(21,32,22,.07)}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:17px;white-space:nowrap}
-  .mark{width:34px;height:34px;border-radius:10px;background:var(--forest);display:grid;place-items:center;color:var(--lime);font-weight:900;font-size:15px;position:relative;overflow:hidden;flex:0 0 auto}
-  .mark::after{content:'';position:absolute;right:-6px;bottom:-8px;width:16px;height:16px;border-radius:50%;background:var(--lime);opacity:.9}
-  .logo small{display:block;font-size:9px;letter-spacing:.22em;color:var(--muted);font-weight:800}
-  nav{display:flex;gap:4px;align-items:center}
-  nav a{font-size:13.5px;font-weight:600;color:#4a5347;padding:8px 13px;border-radius:999px;transition:.2s}
-  nav a:hover{background:#eef0e6;color:var(--forest)}
-  .pill-lime{background:var(--lime);color:var(--lime-d);font-weight:800;font-size:13.5px;padding:11px 18px;border-radius:999px;border:1px solid #b9d94f;box-shadow:0 6px 20px rgba(212,240,118,.5);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
-  .pill-lime:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(212,240,118,.65)}
-  .pill-dark{background:var(--forest);color:#fff;font-weight:800;font-size:14px;padding:14px 24px;border-radius:999px;border:1px solid var(--forest);display:inline-flex;align-items:center;gap:8px;box-shadow:0 12px 30px rgba(21,32,22,.22)}
-  .pill-dark:hover{transform:translateY(-2px)}
-  .pill-outline{background:transparent;color:var(--forest);font-weight:800;font-size:14px;padding:14px 24px;border-radius:999px;border:1.5px solid #c9cdbd;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.6)}
-  .pill-outline:hover{border-color:var(--forest);background:#fff}
-  .burger{display:none;background:#fff;border:1px solid var(--line);border-radius:999px;width:38px;height:38px}
-  /* hero */
-  .hero{text-align:center;padding:52px 0 28px}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:12px;font-weight:800;letter-spacing:.06em;color:#3d463a;box-shadow:0 4px 16px rgba(21,32,22,.05)}
-  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--green);position:relative}
-  .eyebrow .dot::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid rgba(47,158,95,.4);animation:ping 1.8s ease-out infinite}
+}
+</script>
+<style>
+  html,body{overflow-x:hidden;max-width:100%;}
+  *,*::before,*::after{box-sizing:border-box;}
+  body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;}
+  ::selection{background:#D4F076;color:#152016;}
+  .serif-i{font-style:italic;font-weight:500;}
+  .dot-live{position:relative;}
+  .dot-live::after{content:'';position:absolute;inset:-5px;border-radius:9999px;border:2px solid rgba(47,158,95,.4);animation:ping 1.8s ease-out infinite;}
   @keyframes ping{0%{transform:scale(.6);opacity:1}80%,100%{transform:scale(1.5);opacity:0}}
-  h1{font-family:'Fraunces','Newsreader',Georgia,serif;font-weight:600;font-size:clamp(38px,6vw,68px);line-height:.98;letter-spacing:-.02em;margin:22px auto 0;max-width:900px}
-  h1 em{font-style:italic;font-weight:500}
-  h1 .lime-mark{background:linear-gradient(transparent 62%,var(--lime) 62%);padding:0 6px}
-  .sub{max-width:720px;margin:20px auto 0;color:#55604f;font-size:clamp(15px,2vw,17.5px);line-height:1.65}
-  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
-  /* flowcard */
-  .console-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:18px;margin:34px 0 10px}
-  @media(max-width:900px){.console-grid{grid-template-columns:1fr} nav{display:none} .burger{display:grid;place-items:center}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:0 24px 60px rgba(21,32,22,.09);padding:22px}
-  .card-dark{background:var(--forest);color:#eef0e6;border:1px solid #2a3a2d;border-radius:24px;box-shadow:0 24px 60px rgba(21,32,22,.25);padding:22px}
-  .card-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-  .card-h .t{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
-  .card-dark .card-h .t{color:#9aa78f}
-  .card-h h3{font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;margin:6px 0 0;line-height:1.15}
-  .status{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.08em;padding:7px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:7px}
-  .status::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
-  .st-live{background:#e6f5ea;color:#1c6b3a;border:1px solid #bfe6cb}
-  .st-flag{background:#fdf0d5;color:#8a5b12;border:1px solid #f2d492}
-  .st-pause{background:#eef0e6;color:#55604f;border:1px solid #dfe2d2}
-  .st-safe{background:var(--lime);color:var(--lime-d);border:1px solid #b9d94f}
-  .steps{display:flex;align-items:center;gap:0;margin:20px 0 6px}
-  .step{flex:1;text-align:center;position:relative;padding-top:34px;font-size:12px;font-weight:800;color:#8a9079}
-  .step::before{content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:#eef0e6;border:2px solid #d8dcce}
-  .step::after{content:attr(data-i);position:absolute;top:17px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:900;color:#8a9079}
-  .step.active{color:var(--forest)} .step.active::before{background:var(--lime);border-color:#b9d94f} .step.active::after{color:var(--lime-d)}
-  .step.flag{color:#8a5b12} .step.flag::before{background:#fdf0d5;border-color:var(--amber);box-shadow:0 0 0 6px rgba(232,163,61,.18)} .step.flag::after{content:'!';color:#8a5b12}
-  .step.done{color:#1c6b3a} .step.done::before{background:#2f9e5f;border-color:#2f9e5f} .step.done::after{content:'✓';color:#fff}
-  .step-line{height:2px;background:#e5e0d3;margin:0 4px 18px;flex:0 0 26px;border-radius:2px}
-  .anomaly{display:none;margin-top:16px;background:#fff8ec;border:1.5px solid #f2d492;border-left:5px solid var(--amber);border-radius:14px;padding:14px 16px}
-  .anomaly.show{display:block;animation:slideIn .5s cubic-bezier(.21,1.02,.73,1) both}
-  .anomaly b{font-size:13.5px;color:#7a4d0a}
-  .anomaly p{margin:6px 0 0;font-size:13.5px;line-height:1.55;color:#6b5322}
-  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-  .controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-  .btn{font-size:13.5px;font-weight:800;padding:12px 18px;border-radius:999px;border:1.5px solid transparent;display:inline-flex;align-items:center;gap:7px;transition:.2s}
-  .btn:active{transform:scale(.97)}
-  .btn-drift{background:var(--lime);color:var(--lime-d);border-color:#b9d94f}
-  .btn-drift:hover{transform:translateY(-1px)}
-  .btn-steer{background:var(--forest);color:#fff}
-  .btn-steer:hover{background:#233723}
-  .btn-pause{background:#fff;color:var(--forest);border-color:#c9cdbd}
-  .btn-pause.is-paused{background:#fdf0d5;border-color:#f2d492;color:#8a5b12}
-  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-  .editor{display:none;margin-top:16px;background:#fbfaf5;border:1.5px dashed #cfd4bc;border-radius:14px;padding:16px}
-  .editor.show{display:block;animation:slideIn .45s both}
-  .editor h4{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#55604f}
-  .fld{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:560px){.fld{grid-template-columns:1fr}}
-  .fld label{font-size:11px;font-weight:800;letter-spacing:.06em;color:#8a9079;text-transform:uppercase}
-  .fld select,.fld input{width:100%;margin-top:5px;padding:11px 12px;border-radius:10px;border:1.5px solid #d8dcce;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:var(--forest)}
-  .fld select:focus,.fld input:focus{outline:2px solid var(--lime);border-color:#b9d94f}
-  .resolved{display:none;margin-top:16px;background:#f0f9f1;border:1.5px solid #bfe6cb;border-left:5px solid var(--green);border-radius:14px;padding:14px 16px}
-  .resolved.show{display:block;animation:slideIn .5s both}
-  .resolved b{color:#1c6b3a;font-size:13.5px}
-  .resolved p{margin:6px 0 0;font-size:13.5px;color:#3d5a44;line-height:1.55}
-  .metric-top{display:flex;align-items:baseline;justify-content:space-between}
-  .metric-big{font-family:'Fraunces',Georgia,serif;font-size:44px;font-weight:700;letter-spacing:-.02em}
-  .metric-big small{font-size:16px;color:var(--muted)}
-  .bar{height:12px;background:#e9ebe0;border-radius:999px;overflow:hidden;margin-top:10px}
-  .bar i{display:block;height:100%;background:linear-gradient(90deg,#b9d94f,var(--lime));border-radius:999px;width:94.2%;transition:width .8s cubic-bezier(.21,1.02,.73,1)}
-  .bar.warn i{background:linear-gradient(90deg,#e8a33d,#f2c14e)}
-  .kv{display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px dashed #e5e0d3;color:#55604f}
-  .kv b{color:var(--forest)}
-  .log{margin-top:14px;background:#101b12;border:1px solid #2a3a2d;border-radius:14px;padding:14px;min-height:150px;max-height:190px;overflow:hidden;font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.7;color:#cfe6b8}
-  .log .ts{color:#7d8f76}.log .w{color:#f2c14e}.log .ok{color:#7be1a3}.log .err{color:#f28b8b}
-  .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
-  .stat{background:#fbfaf5;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
-  .stat b{font-family:'Fraunces',Georgia,serif;font-size:24px;display:block}
-  .stat span{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
-  /* sections */
-  section.blk{padding:64px 0 10px}
-  .sec-h{font-family:'Fraunces',Georgia,serif;font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-.02em;margin:0;max-width:700px;line-height:1.05}
-  .sec-sub{color:#55604f;line-height:1.65;max-width:640px;margin-top:12px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
-  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:26px}
-  @media(max-width:900px){.grid3,.grid2{grid-template-columns:1fr}}
-  .feat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;transition:.3s}
-  .feat:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(21,32,22,.1)}
-  .feat .ico{width:44px;height:44px;border-radius:13px;background:var(--forest);color:var(--lime);display:grid;place-items:center;font-size:20px}
-  .feat h4{font-family:'Fraunces',Georgia,serif;font-size:19px;margin:14px 0 6px;font-weight:600}
-  .feat p{margin:0;font-size:14px;line-height:1.6;color:#55604f}
-  .feat .tag{font-size:11px;font-weight:800;letter-spacing:.08em;color:#8a5b12;background:#fdf0d5;border-radius:999px;padding:4px 9px;display:inline-block;margin-top:12px}
-  .int{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
-  .int .dot2{width:40px;height:40px;border-radius:12px;background:#eef0e6;display:grid;place-items:center;font-size:18px;flex:0 0 auto}
-  .int b{font-size:14.5px}.int span{font-size:12.5px;color:var(--muted);display:block;margin-top:2px}
-  .int .on{margin-left:auto;font-size:11px;font-weight:800;color:#1c6b3a;background:#e6f5ea;border-radius:999px;padding:5px 10px;white-space:nowrap}
-  footer{margin:70px 0 30px;background:var(--forest);color:#eef0e6;border-radius:28px;padding:40px 30px;text-align:center}
-  footer h3{font-family:'Fraunces',Georgia,serif;font-size:clamp(26px,4vw,38px);font-weight:600;margin:0 0 10px}
-  footer p{color:#9aa78f;line-height:1.65;max-width:560px;margin:0 auto 22px;font-size:14.5px}
-  .toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,80px);background:var(--forest);color:#fff;font-size:13.5px;font-weight:700;padding:13px 20px;border-radius:999px;box-shadow:0 20px 50px rgba(21,32,22,.4);transition:.4s;z-index:100;opacity:0}
-  .toast.show{transform:translate(-50%,0);opacity:1}
-  .toast b{color:var(--lime)}
+  @keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .slide-in{animation:slideIn .45s cubic-bezier(.21,1.02,.73,1) both;}
+  .step-pill{transition:all .35s cubic-bezier(.21,1.02,.73,1);}
+  .log-scroll{scrollbar-width:thin;scrollbar-color:#3a4d3b transparent;}
+  .log-scroll::-webkit-scrollbar{width:5px;}
+  .log-scroll::-webkit-scrollbar-thumb{background:#3a4d3b;border-radius:99px;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,80px);opacity:0;transition:all .4s;z-index:100;max-width:calc(100vw - 32px);}
+  .toast.show{transform:translate(-50%,0);opacity:1;}
+  @media (max-width:640px){ .nav-links{display:none !important;} }
 </style>
 </head>
-<body>
 
-<header>
-  <div class="nav">
-    <a href="#top" class="logo">
-      <span class="mark">◍</span>
-      <span>AutoPilot <span style="color:#5a8a1a">Drift</span><small>REMOTE CONTROL AI</small></span>
+<body class="w-full min-h-screen bg-[#F4F3EE] text-[#152016] flex flex-col items-center overflow-x-hidden antialiased">
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<header class="w-full max-w-6xl mx-auto px-6 sm:px-8">
+  <div class="w-full max-w-6xl mx-auto flex items-center justify-between py-6 px-4">
+    <a href="#top" class="flex items-center gap-3 shrink-0 min-w-0">
+      <span class="w-9 h-9 rounded-xl bg-[#152016] text-[#D4F076] grid place-items-center font-black text-base relative overflow-hidden shrink-0">
+        <span class="absolute -right-1.5 -bottom-2 w-4 h-4 rounded-full bg-[#D4F076] opacity-90"></span>
+        <span class="relative">◍</span>
+      </span>
+      <span class="leading-none">
+        <span class="block font-extrabold tracking-tight text-[17px]">AutoPilot <span class="text-[#5a8a1a]">Drift</span></span>
+        <span class="block text-[10px] tracking-[0.18em] text-[#3F4E40] font-bold mt-0.5">REMOTE CONTROL AI</span>
+      </span>
     </a>
-    <nav aria-label="Primary">
-      <a href="#workflow">Workflow</a>
-      <a href="#monitoring">Monitoring</a>
-      <a href="#insights">AI Insights</a>
-      <a href="#integrations">Integrations</a>
+
+    <nav class="nav-links flex items-center gap-8 text-sm font-medium text-[#3F4E40]" aria-label="Primary">
+      <a href="#workflow" class="hover:text-[#152016] transition whitespace-nowrap">Workflow</a>
+      <a href="#monitoring" class="hover:text-[#152016] transition whitespace-nowrap">Monitoring</a>
+      <a href="#insights" class="hover:text-[#152016] transition whitespace-nowrap">AI Insights</a>
+      <a href="#integrations" class="hover:text-[#152016] transition whitespace-nowrap">Integrations</a>
     </nav>
-    <div style="display:flex;gap:8px;align-items:center">
-      <a href="#console" class="pill-lime">⟡ Launch Remote Console</a>
-      <button class="burger" id="menuBtn" aria-label="Menu">☰</button>
+
+    <div class="flex items-center gap-2 shrink-0">
+      <a href="#console" class="bg-[#D4F076] text-[#152016] font-semibold px-5 py-2.5 rounded-full hover:brightness-95 transition whitespace-nowrap">⟡ Launch Remote Console</a>
+      <button id="menuBtn" class="lg:hidden w-10 h-10 grid place-items-center rounded-full border border-[#E5E3D8] bg-white shrink-0" aria-label="Menu">☰</button>
     </div>
+  </div>
+  <div id="mobileMenu" class="hidden lg:hidden w-full bg-white border border-[#E5E3D8] rounded-2xl shadow-sm p-5 text-sm font-semibold space-y-3 -mt-2">
+    <a href="#workflow" class="block">Workflow</a>
+    <a href="#monitoring" class="block">Monitoring</a>
+    <a href="#insights" class="block">AI Insights</a>
+    <a href="#integrations" class="block">Integrations</a>
   </div>
 </header>
 
-<div id="top" class="wrap hero">
-  <div class="eyebrow"><span class="dot"></span> ⚡ NEW: LIVE AGENT STEERING ENGINE &nbsp;•&nbsp; REMOTE CONTROL AI 2026</div>
-  <h1>Automation that keeps modern teams <em>in <span class="lime-mark">control</span></em></h1>
-  <p class="sub">The remote control bridge for autonomous agent workflows. Monitor drift, inspect anomalies in real-time, and manually steer runaway pipelines before errors ship.</p>
-  <div class="cta">
-    <a href="#console" class="pill-dark">▸ Open Live Console</a>
-    <a href="#workflow" class="pill-outline">▶ Watch Pipeline Demo</a>
+<main id="top" class="w-full flex flex-col items-center">
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="w-full max-w-6xl mx-auto px-6 sm:px-8 text-center pt-10 md:pt-16">
+  <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E5E3D8] text-xs font-semibold uppercase tracking-wider mb-6">
+    <span class="w-2 h-2 rounded-full bg-[#2f9e5f] dot-live shrink-0"></span>
+    <span>⚡ NEW: LIVE AGENT STEERING ENGINE • REMOTE CONTROL AI 2026</span>
   </div>
-</div>
+  <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[1.1] max-w-4xl mx-auto font-semibold">Automation that keeps modern teams <span class="serif-i">in control</span></h1>
+  <p class="text-lg md:text-xl text-[#3F4E40] max-w-2xl mx-auto mt-6 mb-8 leading-relaxed">The remote control bridge for autonomous agent workflows. Monitor drift, inspect anomalies in real-time, and manually steer runaway pipelines before errors ship.</p>
+  <div class="flex items-center justify-center gap-4 flex-wrap">
+    <a href="#console" class="bg-[#152016] text-white font-semibold px-6 py-3.5 rounded-full hover:-translate-y-0.5 transition shadow-lg shadow-black/10">▸ Open Live Console</a>
+    <a href="#workflow" class="border-2 border-[#152016]/15 bg-white/70 font-semibold px-6 py-3.5 rounded-full hover:border-[#152016] transition">▶ Watch Pipeline Demo</a>
+  </div>
+</section>
 
-<!-- ═══════════ CONSOLE ═══════════ -->
-<div class="wrap" id="console">
-  <div class="console-grid">
-    <!-- flowcard -->
-    <div class="card" id="flowcard">
-      <div class="card-h">
-        <div>
-          <div class="t">Live Flowcard · Remote Control</div>
-          <h3>Active Workflow: Enterprise CRM Sync &amp; Outreach Agent</h3>
-        </div>
-        <span class="status st-live" id="statusBadge">● STEERING LIVE</span>
+<!-- ═══════════ CONSOLE / FLOWCARD ═══════════ -->
+<section id="console" class="w-full max-w-6xl mx-auto px-6 sm:px-8">
+  <div id="flowcard" class="w-full max-w-4xl mx-auto mt-12 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-[#E5E3D8] min-w-0">
+
+    <!-- Card header -->
+    <div class="flex items-center justify-between border-b border-[#F0EFEA] pb-4 mb-6 gap-3 flex-wrap">
+      <div class="min-w-0">
+        <div class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#3F4E40]">Live Flowcard · Remote Control</div>
+        <h2 class="font-serif text-xl md:text-2xl font-semibold mt-1">Active Workflow: Enterprise CRM Sync &amp; Outreach Agent</h2>
       </div>
+      <span id="statusBadge" class="shrink-0 text-[11px] font-bold tracking-wide px-3 py-1.5 rounded-full bg-[#e6f5ea] text-[#1c6b3a] border border-[#bfe6cb]">● STEERING LIVE</span>
+    </div>
 
-      <div class="steps" aria-label="Pipeline steps">
-        <div class="step done" id="step1" data-i="1">Check Payload</div>
-        <div class="step-line"></div>
-        <div class="step active" id="step2" data-i="2">Detect Drift</div>
-        <div class="step-line"></div>
-        <div class="step" id="step3" data-i="3">Steer / Approve</div>
-      </div>
-
-      <div class="anomaly" id="anomalyCard" role="alert">
-        <b>⚠ Drift detected — EMEA webhook · 0.4s ago</b>
-        <p>Mismatched currency field in webhook from EMEA region — <b>USD expected, EUR received</b>. Downstream: potential <b>$14,000 refund loop</b> in the CRM outreach leg. Payload quarantined before write.</p>
-      </div>
-
-      <div class="editor" id="steerEditor">
-        <h4>Steer Payload — inline remote patch</h4>
-        <div class="fld">
-          <div><label>Currency code</label>
-            <select id="fldCurrency"><option value="EUR">EUR (keep incoming)</option><option value="USD" selected>USD (force expected)</option><option value="GBP">GBP</option></select></div>
-          <div><label>Region / routing</label>
-            <select id="fldRegion"><option value="EMEA">EMEA → EU-Central</option><option value="AMER" selected>AMER → US-East</option><option value="APAC">APAC → SG</option></select></div>
-          <div><label>Refund-loop guard</label>
-            <select id="fldGuard"><option value="hold" selected>Hold + manual approve</option><option value="cap">Cap at $500</option><option value="off">Off</option></select></div>
-          <div><label>Operator note</label>
-            <input id="fldNote" value="Patch: currency verified vs. invoice #INV-8841" /></div>
-        </div>
-        <div class="controls">
-          <button class="btn btn-steer" id="applyPatchBtn" type="button">✓ Apply Patch &amp; Release</button>
-          <button class="btn btn-pause" id="cancelSteerBtn" type="button">Cancel</button>
+    <!-- Step flow -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div id="step1" class="step-pill rounded-2xl border border-[#E5E3D8] bg-[#F0EFEA] p-4 flex items-start gap-3 min-w-0">
+        <span class="step-ico w-8 h-8 rounded-full bg-white border border-[#E5E3D8] grid place-items-center text-sm font-bold shrink-0">✓</span>
+        <div class="min-w-0">
+          <div class="text-sm font-bold leading-snug">[Check Request]</div>
+          <div class="text-xs text-[#3F4E40] mt-0.5 leading-snug">Check Payload · schema contract v12</div>
+          <div class="step-state text-[11px] font-bold uppercase tracking-wide text-[#1c6b3a] mt-1.5">Completed</div>
         </div>
       </div>
-
-      <div class="resolved" id="resolvedCard">
-        <b>✓ Steered &amp; resolved — payload released safely</b>
-        <p id="resolvedText">Currency forced to USD, routing held for manual approve, refund-loop guard armed. Workflow resumed on Step 3 with a signed audit entry.</p>
+      <div id="step2" class="step-pill rounded-2xl border border-[#E5E3D8] bg-[#F0EFEA] p-4 flex items-start gap-3 min-w-0">
+        <span class="step-ico w-8 h-8 rounded-full bg-white border border-[#E5E3D8] grid place-items-center text-sm font-bold shrink-0">2</span>
+        <div class="min-w-0">
+          <div class="text-sm font-bold leading-snug">[Assign Owner / Detect Drift]</div>
+          <div class="text-xs text-[#3F4E40] mt-0.5 leading-snug">Detect Drift · EMEA currency flag</div>
+          <div class="step-state text-[11px] font-bold uppercase tracking-wide text-[#3F4E40] mt-1.5">In progress</div>
+        </div>
       </div>
-
-      <div class="controls">
-        <button class="btn btn-drift" id="injectBtn" type="button">⚡ Inject Workflow Drift</button>
-        <button class="btn btn-steer" id="steerBtn" type="button">⟡ Steer Payload</button>
-        <button class="btn btn-pause" id="pauseBtn" type="button">❚❚ Pause Pipeline</button>
+      <div id="step3" class="step-pill rounded-2xl border border-[#E5E3D8] bg-[#F0EFEA] p-4 flex items-start gap-3 min-w-0">
+        <span class="step-ico w-8 h-8 rounded-full bg-white border border-[#E5E3D8] grid place-items-center text-sm font-bold shrink-0">3</span>
+        <div class="min-w-0">
+          <div class="text-sm font-bold leading-snug">[Execute Action / Steer]</div>
+          <div class="text-xs text-[#3F4E40] mt-0.5 leading-snug">Steer / Approve · signed release</div>
+          <div class="step-state text-[11px] font-bold uppercase tracking-wide text-[#3F4E40] mt-1.5">Queued</div>
+        </div>
       </div>
     </div>
 
-    <!-- metrics + live log -->
-    <div class="card-dark" id="metricsCard">
-      <div class="card-h">
-        <div><div class="t">Autonomous Accuracy</div><div class="metric-big" id="metricVal">94.2<small>%</small></div></div>
-        <span class="status st-live" id="queueBadge">● QUEUE: 1,284 · FLOWING</span>
-      </div>
-      <div class="bar" id="barWrap"><i id="accBar"></i></div>
-      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#9aa78f;margin-top:6px"><span>Live accuracy (24h rolling)</span><span id="barPct">94.2% autonomous</span></div>
+    <!-- Anomaly -->
+    <div id="anomalyCard" class="hidden mt-4 bg-[#fff8ec] border border-[#f2d492] border-l-4 border-l-[#e8a33d] rounded-2xl p-4 slide-in" role="alert">
+      <b class="text-sm text-[#7a4d0a]">⚠ Drift detected — EMEA webhook · just now</b>
+      <p class="text-sm leading-relaxed text-[#6b5322] mt-1.5">Mismatched currency field in webhook from EMEA region — <b>USD expected, EUR received</b>. Downstream: potential <b>$14,000 refund loop</b> in the CRM outreach leg. Payload quarantined before write.</p>
+    </div>
 
-      <div class="stats-row">
-        <div class="stat" style="background:#1e2b1f;border-color:#2a3a2d"><b id="statInjected">0</b><span style="color:#9aa78f">Drifts injected</span></div>
-        <div class="stat" style="background:#1e2b1f;border-color:#2a3a2d"><b id="statSteered">0</b><span style="color:#9aa78f">Steered safely</span></div>
+    <!-- Steer editor -->
+    <div id="steerEditor" class="hidden mt-4 bg-[#fbfaf5] border border-dashed border-[#cfd4bc] rounded-2xl p-4 sm:p-5 slide-in">
+      <h3 class="text-xs font-bold tracking-wider uppercase text-[#3F4E40] mb-4">Steer Payload — inline remote patch</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="min-w-0"><label class="text-[11px] font-bold uppercase tracking-wide text-[#3F4E40]" for="fldCurrency">Currency code</label>
+          <select id="fldCurrency" class="mt-1.5 w-full rounded-xl border border-[#E5E3D8] bg-white px-3 py-2.5 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#D4F076]"><option value="EUR">EUR (keep incoming)</option><option value="USD" selected>USD (force expected)</option><option value="GBP">GBP</option></select></div>
+        <div class="min-w-0"><label class="text-[11px] font-bold uppercase tracking-wide text-[#3F4E40]" for="fldRegion">Region / routing</label>
+          <select id="fldRegion" class="mt-1.5 w-full rounded-xl border border-[#E5E3D8] bg-white px-3 py-2.5 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#D4F076]"><option value="EMEA">EMEA → EU-Central</option><option value="AMER" selected>AMER → US-East</option><option value="APAC">APAC → SG</option></select></div>
+        <div class="min-w-0"><label class="text-[11px] font-bold uppercase tracking-wide text-[#3F4E40]" for="fldGuard">Refund-loop guard</label>
+          <select id="fldGuard" class="mt-1.5 w-full rounded-xl border border-[#E5E3D8] bg-white px-3 py-2.5 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#D4F076]"><option value="hold" selected>Hold + manual approve</option><option value="cap">Cap at $500</option><option value="off">Off</option></select></div>
+        <div class="min-w-0"><label class="text-[11px] font-bold uppercase tracking-wide text-[#3F4E40]" for="fldNote">Operator note</label>
+          <input id="fldNote" class="mt-1.5 w-full rounded-xl border border-[#E5E3D8] bg-white px-3 py-2.5 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#D4F076]" value="Patch: currency verified vs. invoice #INV-8841" /></div>
       </div>
-
-      <div style="margin-top:16px">
-        <div class="kv"><span>Agent</span><b>crm-sync/outreach-v4</b></div>
-        <div class="kv"><span>Last steer</span><b id="lastSteer">— none yet</b></div>
-        <div class="kv"><span>Median steer latency</span><b>0.4s</b></div>
-        <div class="kv"><span>Audit trail</span><b>Signed · append-only</b></div>
+      <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
+        <button id="applyPatchBtn" type="button" class="bg-[#152016] text-white font-semibold px-5 py-2.5 rounded-full hover:brightness-125 transition">✓ Apply Patch &amp; Release</button>
+        <button id="cancelSteerBtn" type="button" class="bg-white border border-[#E5E3D8] font-semibold px-5 py-2.5 rounded-full hover:bg-[#F0EFEA] transition">Cancel</button>
       </div>
+    </div>
 
-      <div class="log" id="logFeed" aria-live="polite"></div>
+    <!-- Resolved -->
+    <div id="resolvedCard" class="hidden mt-4 bg-[#f0f9f1] border border-[#bfe6cb] border-l-4 border-l-[#2f9e5f] rounded-2xl p-4 slide-in">
+      <b class="text-sm text-[#1c6b3a]">✓ Steered &amp; resolved — payload released safely</b>
+      <p id="resolvedText" class="text-sm leading-relaxed text-[#3d5a44] mt-1.5">Currency forced to USD, routing held for manual approve, refund-loop guard armed. Workflow resumed on [Execute Action / Steer] with a signed audit entry.</p>
+    </div>
+
+    <!-- Success rate -->
+    <div class="mt-6">
+      <div class="flex items-baseline justify-between gap-3 flex-wrap">
+        <div class="text-sm font-bold">Success Rate · <span class="text-[#3F4E40] font-semibold">Autonomous Accuracy</span></div>
+        <div class="flex items-baseline gap-2"><span id="metricVal" class="font-serif text-3xl font-bold leading-none">89.3<small class="text-base text-[#3F4E40]">%</small></span><span class="text-xs font-semibold text-[#3F4E40]">target 94.2% after steer</span></div>
+      </div>
+      <div id="barWrap" class="w-full bg-[#E5E3D8] h-2.5 rounded-full overflow-hidden mt-6">
+        <div id="accBar" class="bg-[#152016] w-[89.3%] h-full rounded-full transition-all duration-700" style="width:89.3%"></div>
+      </div>
+      <div class="flex justify-between text-[11px] font-semibold text-[#3F4E40] mt-2"><span>Live accuracy (24h rolling)</span><span id="barPct">89.3% autonomous</span></div>
+    </div>
+
+    <!-- Controls dock -->
+    <div class="flex flex-wrap items-center justify-center gap-3 pt-6 border-t border-[#F0EFEA] mt-6">
+      <button id="injectBtn" type="button" class="bg-[#D4F076] text-[#152016] font-semibold px-5 py-2.5 rounded-full hover:brightness-95 transition">⚡ Inject Workflow Drift</button>
+      <button id="steerBtn" type="button" class="bg-[#152016] text-white font-semibold px-5 py-2.5 rounded-full hover:brightness-125 transition">⟡ Steer Payload</button>
+      <button id="pauseBtn" type="button" class="bg-white text-[#152016] border border-[#E5E3D8] font-semibold px-5 py-2.5 rounded-full hover:bg-[#F0EFEA] transition">❚❚ Pause Pipeline</button>
+    </div>
+
+    <!-- Queue + metrics + log — inside the flowcard so nothing overflows -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 items-start">
+      <div class="bg-[#152016] text-[#eef0e6] rounded-2xl p-5 min-w-0">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#9aa78f]">Queue · Monitoring</div>
+          <span id="queueBadge" class="text-[11px] font-bold px-3 py-1.5 rounded-full bg-[#D4F076] text-[#182215]">● QUEUE: 1,284 · FLOWING</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-4">
+          <div class="bg-[#1e2b1f] border border-[#2a3a2d] rounded-xl p-3 text-center"><b id="statInjected" class="font-serif text-2xl block">0</b><span class="text-[11px] font-bold uppercase tracking-wide text-[#9aa78f]">Drifts injected</span></div>
+          <div class="bg-[#1e2b1f] border border-[#2a3a2d] rounded-xl p-3 text-center"><b id="statSteered" class="font-serif text-2xl block">0</b><span class="text-[11px] font-bold uppercase tracking-wide text-[#9aa78f]">Steered safely</span></div>
+        </div>
+        <div class="mt-4 text-sm space-y-2">
+          <div class="flex justify-between gap-3 border-b border-dashed border-[#2a3a2d] pb-2"><span class="text-[#9aa78f]">Agent</span><b class="text-right">crm-sync/outreach-v4</b></div>
+          <div class="flex justify-between gap-3 border-b border-dashed border-[#2a3a2d] pb-2"><span class="text-[#9aa78f]">Last steer</span><b id="lastSteer" class="text-right">— none yet</b></div>
+          <div class="flex justify-between gap-3 border-b border-dashed border-[#2a3a2d] pb-2"><span class="text-[#9aa78f]">Median steer latency</span><b>0.4s</b></div>
+          <div class="flex justify-between gap-3"><span class="text-[#9aa78f]">Audit trail</span><b>Signed · append-only</b></div>
+        </div>
+      </div>
+      <div class="bg-[#101b12] border border-[#2a3a2d] rounded-2xl p-4 min-w-0">
+        <div class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#9aa78f] mb-2">Streaming event log</div>
+        <div id="logFeed" class="log-scroll h-44 overflow-hidden font-mono text-[12px] leading-relaxed text-[#cfe6b8]" aria-live="polite"></div>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ═══════════ WORKFLOW ═══════════ -->
-<section class="wrap blk" id="workflow">
-  <h2 class="sec-h">One flowcard. Full remote control of every run.</h2>
-  <p class="sec-sub">Agents drift silently — a field changes upstream, a region returns a new shape, a webhook starts sending euros where dollars were expected. AutoPilot Drift surfaces that drift the instant it appears and hands you the steering wheel.</p>
-  <div class="grid3">
-    <div class="feat"><div class="ico">◈</div><h4>Check Payload</h4><p>Every payload is validated against its live schema contract on arrival. Unknown fields, flipped currencies, and shape changes are flagged before they touch your systems.</p><span class="tag">200ms median check</span></div>
-    <div class="feat"><div class="ico">◎</div><h4>Detect Drift</h4><p>Anomaly scoring watches for silent schema and semantic drift across regions and agents — like the EMEA currency mismatch that could spin a $14,000 refund loop.</p><span class="tag">Flagged, never silent</span></div>
-    <div class="feat"><div class="ico">⟡</div><h4>Steer / Approve</h4><p>Patch the parameter remotely from the inline editor, hold the queue, or approve with a signed audit entry. Humans stay in the loop; the agent keeps moving.</p><span class="tag">Inline editor · audit-signed</span></div>
+<!-- ═══════════ FEATURES ═══════════ -->
+<section id="workflow" class="w-full max-w-6xl mx-auto px-6 sm:px-8 pt-20">
+  <h2 class="font-serif text-4xl md:text-5xl tracking-tight leading-[1.1] max-w-3xl mx-auto text-center font-semibold">One flowcard. Full remote control of every run.</h2>
+  <p class="text-lg text-[#3F4E40] max-w-2xl mx-auto mt-5 leading-relaxed text-center">Agents drift silently — a field changes upstream, a region returns a new shape. AutoPilot Drift surfaces that drift the instant it appears and hands you the steering wheel.</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-20 w-full max-w-6xl mx-auto">
+    <article class="bg-[#D4F076] rounded-3xl p-8 min-w-0">
+      <div class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center text-lg">◈</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">[Check Request] — Check Payload</h3>
+      <p class="text-[#2a3a2a] leading-relaxed mt-2 text-[15px]">Every payload is validated against its live schema contract on arrival (200ms median). Unknown fields, flipped currencies, and shape changes are flagged before they touch your systems.</p>
+      <span class="inline-block mt-4 text-[11px] font-bold uppercase tracking-wide bg-[#152016] text-white rounded-full px-3 py-1">200ms median check</span>
+    </article>
+    <article class="bg-white border border-[#E5E3D8] rounded-3xl p-8 min-w-0 shadow-sm">
+      <div class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center text-lg">◎</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">[Assign Owner / Detect Drift]</h3>
+      <p class="text-[#3F4E40] leading-relaxed mt-2 text-[15px]">Anomaly scoring watches for silent schema and semantic drift across regions and agents — like the EMEA currency mismatch that could spin a $14,000 refund loop. Flagged, never silent.</p>
+      <span class="inline-block mt-4 text-[11px] font-bold uppercase tracking-wide bg-[#FEF3C7] text-[#7a4d0a] rounded-full px-3 py-1">Flagged · amber quarantine</span>
+    </article>
+    <article class="bg-white border border-[#E5E3D8] rounded-3xl p-8 min-w-0 shadow-sm">
+      <div class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center text-lg">⟡</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">[Execute Action / Steer] — Steer / Approve</h3>
+      <p class="text-[#3F4E40] leading-relaxed mt-2 text-[15px]">Patch the parameter remotely from the inline editor, hold the queue, or approve with a signed audit entry. Humans stay in the loop; the agent keeps moving.</p>
+      <span class="inline-block mt-4 text-[11px] font-bold uppercase tracking-wide bg-[#D4F076] text-[#152016] rounded-full px-3 py-1">Inline editor · audit-signed</span>
+    </article>
+    <article class="bg-[#152016] text-[#eef0e6] rounded-3xl p-8 min-w-0">
+      <div class="w-11 h-11 rounded-2xl bg-[#D4F076] text-[#152016] grid place-items-center text-lg">❚❚</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">Pause the world in one tap</h3>
+      <p class="text-[#c9d2bd] leading-relaxed mt-2 text-[15px]">Queue depth, autonomous accuracy, and the streaming log update live above — inject drift, steer, pause, and resume without ever leaving the console. <span id="monTick" class="font-bold text-white">89.3% now</span></p>
+      <span class="inline-block mt-4 text-[11px] font-bold uppercase tracking-wide bg-white/10 rounded-full px-3 py-1">Zero backend · file://</span>
+    </article>
   </div>
 </section>
 
 <!-- ═══════════ MONITORING ═══════════ -->
-<section class="wrap blk" id="monitoring">
-  <h2 class="sec-h">Monitoring that sees drift before customers do.</h2>
-  <p class="sec-sub">Sit on top of the live console above: queue depth, autonomous accuracy, and a streaming event log update in real time as you inject drift, steer, and pause.</p>
-  <div class="grid2">
-    <div class="feat"><div class="ico">⌁</div><h4>Live accuracy ticker</h4><p>The 94.2% autonomous accuracy bar dips on drift and recovers on steer — so the cost of every anomaly is visible in one glance.</p><span class="tag" id="monTick">94.2% now</span></div>
-    <div class="feat"><div class="ico">≋</div><h4>Streaming event log</h4><p>Every inject, flag, patch, and pause lands in the console log with a timestamp and severity — no SSH, no tailing journals by hand.</p><span class="tag">Zero backend · file://</span></div>
+<section id="monitoring" class="w-full max-w-6xl mx-auto px-6 sm:px-8 pt-20">
+  <h2 class="font-serif text-4xl md:text-5xl tracking-tight leading-[1.1] max-w-3xl mx-auto text-center font-semibold">Monitoring that sees drift before customers do.</h2>
+  <p class="text-lg text-[#3F4E40] max-w-2xl mx-auto mt-5 leading-relaxed text-center">Sit on top of the live console: queue depth, autonomous accuracy, and a streaming event log update in real time as you inject drift, steer, and pause.</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-20 w-full max-w-6xl mx-auto">
+    <article class="bg-white border border-[#E5E3D8] rounded-3xl p-8 min-w-0 shadow-sm">
+      <div class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center text-lg">⌁</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">Live accuracy ticker</h3>
+      <p class="text-[#3F4E40] leading-relaxed mt-2 text-[15px]">The success-rate bar dips on drift and recovers to 94.2% on steer — the cost of every anomaly in one glance.</p>
+    </article>
+    <article class="bg-[#D4F076] rounded-3xl p-8 min-w-0">
+      <div class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center text-lg">≋</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">Streaming event log</h3>
+      <p class="text-[#2a3a2a] leading-relaxed mt-2 text-[15px]">Every inject, flag, patch, and pause lands in the console log with timestamp and severity — no SSH, no tailing journals by hand.</p>
+    </article>
   </div>
 </section>
 
 <!-- ═══════════ AI INSIGHTS ═══════════ -->
-<section class="wrap blk" id="insights">
-  <h2 class="sec-h">AI insights that explain the drift, not just alert on it.</h2>
-  <p class="sec-sub">When a payload is quarantined, the insight panel tells you what changed, where it likely came from, and what it would have broken downstream — before you decide how to steer.</p>
-  <div class="grid3">
-    <div class="feat"><div class="ico">⌗</div><h4>What changed</h4><p>Field-level diff: currency EUR ≠ expected USD, plus region and shape deltas vs. the last 10,000 clean payloads.</p><span class="tag">Field-level diff</span></div>
-    <div class="feat"><div class="ico">➤</div><h4>Blast radius</h4><p>Downstream impact forecast: CRM outreach leg, refund workflow, and the $14,000 loop that would have shipped.</p><span class="tag">$14k loop forecast</span></div>
-    <div class="feat"><div class="ico">✎</div><h4>Suggested patch</h4><p>One-click steering presets: force expected currency, reroute region, arm the refund guard — then release.</p><span class="tag">1-click steer</span></div>
+<section id="insights" class="w-full max-w-6xl mx-auto px-6 sm:px-8 pt-20">
+  <h2 class="font-serif text-4xl md:text-5xl tracking-tight leading-[1.1] max-w-3xl mx-auto text-center font-semibold">AI insights that explain the drift, not just alert on it.</h2>
+  <p class="text-lg text-[#3F4E40] max-w-2xl mx-auto mt-5 leading-relaxed text-center">What changed, where it likely came from, and what it would have broken downstream — before you decide how to steer.</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-20 w-full max-w-6xl mx-auto">
+    <article class="bg-white border border-[#E5E3D8] rounded-3xl p-8 min-w-0 shadow-sm">
+      <div class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center text-lg">⌗</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">What changed</h3>
+      <p class="text-[#3F4E40] leading-relaxed mt-2 text-[15px]">Field-level diff: currency EUR ≠ expected USD, plus region and shape deltas vs. the last 10,000 clean payloads.</p>
+    </article>
+    <article class="bg-[#D4F076] rounded-3xl p-8 min-w-0">
+      <div class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center text-lg">➤</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">Blast radius</h3>
+      <p class="text-[#2a3a2a] leading-relaxed mt-2 text-[15px]">Downstream impact forecast: CRM outreach leg, refund workflow, and the $14,000 loop that would have shipped.</p>
+    </article>
+    <article class="bg-white border border-[#E5E3D8] rounded-3xl p-8 min-w-0 shadow-sm">
+      <div class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center text-lg">✎</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">Suggested patch</h3>
+      <p class="text-[#3F4E40] leading-relaxed mt-2 text-[15px]">One-click presets: force expected currency, reroute region, arm the refund guard — then release.</p>
+    </article>
+    <article class="bg-[#152016] text-[#eef0e6] rounded-3xl p-8 min-w-0">
+      <div class="w-11 h-11 rounded-2xl bg-[#D4F076] text-[#152016] grid place-items-center text-lg">◷</div>
+      <h3 class="font-serif text-2xl font-semibold mt-4">Signed audit trail</h3>
+      <p class="text-[#c9d2bd] leading-relaxed mt-2 text-[15px]">Every steer, pause, and approval is append-only and exportable — evidence for the next incident review.</p>
+    </article>
   </div>
 </section>
 
 <!-- ═══════════ INTEGRATIONS ═══════════ -->
-<section class="wrap blk" id="integrations">
-  <h2 class="sec-h">Drops into your stack in minutes.</h2>
-  <p class="sec-sub">Single-file console, no backend to host. Point your agents' webhooks at the bridge and steer from any browser.</p>
-  <div class="grid2">
-    <div class="int"><div class="dot2">⬡</div><div><b>Webhook bridge</b><span>Any agent framework, HTTP in</span></div><span class="on">● CONNECTED</span></div>
-    <div class="int"><div class="dot2">▦</div><div><b>CRM sync (Salesforce / HubSpot)</b><span>Outreach leg with refund guard</span></div><span class="on">● CONNECTED</span></div>
-    <div class="int"><div class="dot2">✉</div><div><b>Outreach &amp; billing</b><span>Currency-safe send path</span></div><span class="on">● CONNECTED</span></div>
-    <div class="int"><div class="dot2">◷</div><div><b>Signed audit log</b><span>Append-only, exportable evidence</span></div><span class="on">● SIGNED</span></div>
+<section id="integrations" class="w-full max-w-6xl mx-auto px-6 sm:px-8 pt-20">
+  <h2 class="font-serif text-4xl md:text-5xl tracking-tight leading-[1.1] max-w-3xl mx-auto text-center font-semibold">Drops into your stack in minutes.</h2>
+  <p class="text-lg text-[#3F4E40] max-w-2xl mx-auto mt-5 leading-relaxed text-center">Single-file console, no backend to host. Point your agents' webhooks at the bridge and steer from any browser.</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-20 w-full max-w-6xl mx-auto">
+    <div class="bg-white border border-[#E5E3D8] rounded-3xl p-8 flex items-center gap-4 shadow-sm min-w-0"><span class="w-11 h-11 rounded-2xl bg-[#F0EFEA] grid place-items-center shrink-0">⬡</span><div class="min-w-0"><b class="block">Webhook bridge</b><span class="text-sm text-[#3F4E40]">Any agent framework, HTTP in</span></div><span class="ml-auto shrink-0 text-[11px] font-bold text-[#1c6b3a] bg-[#e6f5ea] rounded-full px-3 py-1">● CONNECTED</span></div>
+    <div class="bg-white border border-[#E5E3D8] rounded-3xl p-8 flex items-center gap-4 shadow-sm min-w-0"><span class="w-11 h-11 rounded-2xl bg-[#F0EFEA] grid place-items-center shrink-0">▦</span><div class="min-w-0"><b class="block">CRM sync (Salesforce / HubSpot)</b><span class="text-sm text-[#3F4E40]">Outreach leg with refund guard</span></div><span class="ml-auto shrink-0 text-[11px] font-bold text-[#1c6b3a] bg-[#e6f5ea] rounded-full px-3 py-1">● CONNECTED</span></div>
+    <div class="bg-[#D4F076] rounded-3xl p-8 flex items-center gap-4 min-w-0"><span class="w-11 h-11 rounded-2xl bg-[#152016] text-[#D4F076] grid place-items-center shrink-0">✉</span><div class="min-w-0"><b class="block">Outreach &amp; billing</b><span class="text-sm text-[#2a3a2a]">Currency-safe send path</span></div><span class="ml-auto shrink-0 text-[11px] font-bold text-[#152016] bg-white/60 rounded-full px-3 py-1">● CONNECTED</span></div>
+    <div class="bg-white border border-[#E5E3D8] rounded-3xl p-8 flex items-center gap-4 shadow-sm min-w-0"><span class="w-11 h-11 rounded-2xl bg-[#F0EFEA] grid place-items-center shrink-0">◷</span><div class="min-w-0"><b class="block">Signed audit log</b><span class="text-sm text-[#3F4E40]">Append-only, exportable evidence</span></div><span class="ml-auto shrink-0 text-[11px] font-bold text-[#1c6b3a] bg-[#e6f5ea] rounded-full px-3 py-1">● SIGNED</span></div>
   </div>
 </section>
 
-<footer class="wrap">
-  <h3>Steer the agent. Before the drift ships.</h3>
-  <p>One file, zero backend. Double-click <b style="color:#D4F076">index.html</b> and inject your first drift in ten seconds — then steer, pause, and release it yourself.</p>
-  <a href="#console" class="pill-lime">⟡ Launch Remote Console</a>
-  <div style="margin-top:18px;font-size:12px;color:#7d8f76">AutoPilot Drift · Remote Control AI Hackathon 2026 · Single-file, zero-backend demo</div>
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="w-full max-w-6xl mx-auto px-6 sm:px-8 mt-20 mb-10">
+  <div class="bg-[#152016] text-white rounded-[2rem] p-10 md:p-14 text-center">
+    <h3 class="font-serif text-4xl md:text-5xl tracking-tight leading-[1.1] font-semibold">Steer the agent. Before the drift ships.</h3>
+    <p class="text-[#9aa78f] leading-relaxed max-w-2xl mx-auto mt-4 mb-8">One file, zero backend. Double-click <b class="text-[#D4F076]">index.html</b> and inject your first drift in ten seconds — then steer, pause, and release it yourself.</p>
+    <a href="#console" class="inline-block bg-[#D4F076] text-[#152016] font-semibold px-6 py-3.5 rounded-full hover:brightness-95 transition">⟡ Launch Remote Console</a>
+    <div class="mt-6 text-xs text-[#7d8f76]">AutoPilot Drift · Remote Control AI Hackathon 2026 · Single-file, zero-backend demo</div>
+  </div>
 </footer>
+</main>
 
-<div class="toast" id="toast"></div>
+<div id="toast" class="toast bg-[#152016] text-white text-sm font-semibold px-5 py-3 rounded-full shadow-2xl"></div>
 
 <script>
 (function(){
   "use strict";
-  var state = { mode:"live", accuracy:94.2, injected:0, steered:0, paused:false, flagged:false };
+  var state = { accuracy:89.3, injected:0, steered:0, paused:false, flagged:false };
   var $ = function(id){ return document.getElementById(id); };
   var logEl = $("logFeed");
-  function ts(){ var d=new Date(); return d.toTimeString().slice(0,8); }
+  function ts(){ return new Date().toTimeString().slice(0,8); }
   function log(msg, cls){
     var div=document.createElement("div");
-    div.innerHTML='<span class="ts">'+ts()+'</span> ';
+    div.className="whitespace-normal break-words";
+    var t=document.createElement("span"); t.className="text-[#7d8f76]"; t.textContent=ts()+" ";
     var s=document.createElement("span"); if(cls) s.className=cls; s.textContent=msg;
-    div.appendChild(s); logEl.appendChild(div);
+    div.appendChild(t); div.appendChild(s); logEl.appendChild(div);
     while(logEl.children.length>24) logEl.removeChild(logEl.firstChild);
     logEl.scrollTop=logEl.scrollHeight;
   }
@@ -324,103 +332,89 @@
   function beep(f){ try{ var AC=window.AudioContext||window.webkitAudioContext; var ac=new AC(); var o=ac.createOscillator(),g=ac.createGain(); o.frequency.value=f||660; o.type="sine"; g.gain.value=0.06; o.connect(g); g.connect(ac.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+0.35); o.stop(ac.currentTime+0.36);}catch(e){} }
   function setAccuracy(v){
     state.accuracy=Math.round(v*10)/10;
-    $("metricVal").innerHTML=state.accuracy.toFixed(1)+"<small>%</small>";
+    $("metricVal").innerHTML=state.accuracy.toFixed(1)+"<small class=\"text-base text-[#3F4E40]\">%</small>";
     $("accBar").style.width=state.accuracy+"%";
     $("barPct").textContent=state.accuracy.toFixed(1)+"% autonomous";
-    $("monTick").textContent=state.accuracy.toFixed(1)+"% now";
-    var warn=$("barWrap"); if(state.accuracy<90){warn.classList.add("warn");}else{warn.classList.remove("warn");}
+    var m=$("monTick"); if(m) m.textContent=state.accuracy.toFixed(1)+"% now";
   }
-  function setStatus(mode, label){
-    var b=$("statusBadge"); b.className="status "+(mode==="flag"?"st-flag":mode==="pause"?"st-pause":mode==="safe"?"st-safe":"st-live");
-    b.textContent="● "+label;
+  function setStatus(mode, label, badgeCls){
+    var b=$("statusBadge"); b.className="shrink-0 text-[11px] font-bold tracking-wide px-3 py-1.5 rounded-full "+badgeCls; b.textContent="● "+label;
     var q=$("queueBadge");
-    if(mode==="pause"){ q.className="status st-pause"; q.textContent="❚❚ QUEUE: HALTED BY OPERATOR"; }
-    else if(mode==="flag"){ q.className="status st-flag"; q.textContent="⚠ QUARANTINED · AWAITING STEER"; }
-    else if(mode==="safe"){ q.className="status st-safe"; q.textContent="✓ QUEUE: 1,284 · FLOWING"; }
-    else { q.className="status st-live"; q.textContent="● QUEUE: 1,284 · FLOWING"; }
+    if(mode==="pause"){ q.className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-[#FEF3C7] text-[#7a4d0a]"; q.textContent="❚❚ QUEUE: HALTED BY OPERATOR"; }
+    else if(mode==="flag"){ q.className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-[#FEF3C7] text-[#7a4d0a]"; q.textContent="⚠ QUARANTINED · AWAITING STEER"; }
+    else if(mode==="safe"){ q.className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-[#D4F076] text-[#182215]"; q.textContent="✓ QUEUE: 1,284 · FLOWING"; }
+    else { q.className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-[#e6f5ea] text-[#1c6b3a] border border-[#bfe6cb]"; q.textContent="● QUEUE: 1,284 · FLOWING"; }
   }
-  function setSteps(s1,s2,s3){ ["step1","step2","step3"].forEach(function(id,i){ var el=$(id); var c=[s1,s2,s3][i]; el.className="step "+(c||""); }); }
+  function setStep(id, preset){
+    var el=$(id);
+    var base="step-pill rounded-2xl border p-4 flex items-start gap-3 min-w-0 ";
+    var ico=el.querySelector(".step-ico"), st=el.querySelector(".step-state");
+    if(preset==="done"){ el.className=base+"border-[#bfe6cb] bg-[#f0f9f1]"; ico.className="step-ico w-8 h-8 rounded-full bg-[#2f9e5f] text-white grid place-items-center text-sm font-bold shrink-0"; ico.textContent="✓"; st.textContent="Completed"; st.className="step-state text-[11px] font-bold uppercase tracking-wide text-[#1c6b3a] mt-1.5"; }
+    else if(preset==="flag"){ el.className=base+"border-[#f2d492] bg-[#fff8ec]"; ico.className="step-ico w-8 h-8 rounded-full bg-white border-2 border-[#e8a33d] text-[#7a4d0a] grid place-items-center text-sm font-bold shrink-0"; ico.textContent="!"; st.textContent="Flagged"; st.className="step-state text-[11px] font-bold uppercase tracking-wide text-[#7a4d0a] mt-1.5"; }
+    else if(preset==="active"){ el.className=base+"border-[#b9d94f] bg-[#D4F076]"; ico.className="step-ico w-8 h-8 rounded-full bg-[#152016] text-[#D4F076] grid place-items-center text-sm font-bold shrink-0"; ico.textContent="3"; st.textContent="Active"; st.className="step-state text-[11px] font-bold uppercase tracking-wide text-[#152016] mt-1.5"; }
+    else { el.className=base+"border-[#E5E3D8] bg-[#F0EFEA]"; ico.className="step-ico w-8 h-8 rounded-full bg-white border border-[#E5E3D8] grid place-items-center text-sm font-bold shrink-0"; ico.textContent=id==="step1"?"1":id==="step2"?"2":"3"; st.textContent=id==="step2"?"In progress":"Queued"; st.className="step-state text-[11px] font-bold uppercase tracking-wide text-[#3F4E40] mt-1.5"; }
+  }
   log("AutoPilot Drift console online — file:// mode, zero backend.", "");
-  log("Agent crm-sync/outreach-v4 connected · schema contract v12 loaded.", "ok");
-  log("Watching 1,284 queued payloads · accuracy 94.2%.", "");
-
+  log("Agent crm-sync/outreach-v4 connected · schema contract v12 loaded.", "text-[#7be1a3]");
+  log("Watching 1,284 queued payloads · accuracy 89.3% (target 94.2%).", "");
   var cadences=["payload OK · CRM contact upsert · 200ms","webhook verified · AMER region · USD","outreach leg sent · 1 msg · guard clean","payload OK · invoice sync · EUR→USD normalized","heartbeat · agent healthy · 0 drift"];
   var ci=0;
-  setInterval(function(){
-    if(state.paused) return;
-    if(state.flagged) return;
-    log(cadences[ci%cadences.length], ""); ci++;
-  }, 2600);
+  setInterval(function(){ if(state.paused||state.flagged) return; log(cadences[ci%cadences.length], ""); ci++; }, 2600);
 
-  /* ── Inject drift ── */
   $("injectBtn").addEventListener("click", function(){
     if(state.flagged){ toast("Drift already flagged — <b>steer or resolve</b> it first."); return; }
     if(state.paused){ toast("Pipeline is paused — <b>resume</b> to inject drift."); return; }
-    state.flagged=true; state.injected++;
-    $("statInjected").textContent=state.injected;
-    $("anomalyCard").classList.add("show");
-    $("resolvedCard").classList.remove("show");
-    setSteps("done","flag","");
-    setStatus("flag","DRIFT FLAGGED");
-    setAccuracy(78.4);
-    log("DRIFT: currency mismatch EUR≠USD · EMEA webhook · payload quarantined.", "err");
-    log("Impact: potential $14,000 refund loop downstream — write blocked.", "w");
-    beep(520);
-    toast("⚠ <b>Drift flagged</b> — $14,000 refund loop blocked. Steer to recover.");
-    document.getElementById("flowcard").scrollIntoView({behavior:"smooth",block:"center"});
+    state.flagged=true; state.injected++; $("statInjected").textContent=state.injected;
+    $("anomalyCard").classList.remove("hidden"); $("resolvedCard").classList.add("hidden");
+    setStep("step1","done"); setStep("step2","flag"); setStep("step3","idle");
+    setStatus("flag","DRIFT FLAGGED","bg-[#FEF3C7] text-[#7a4d0a] border border-[#f2d492]");
+    setAccuracy(61.7);
+    log("DRIFT: [Assign Owner / Detect Drift] flagged EUR≠USD · EMEA webhook · payload quarantined.", "text-[#f28b8b]");
+    log("Impact: potential $14,000 refund loop downstream — write blocked.", "text-[#f2c14e]");
+    beep(520); toast("⚠ <b>Drift flagged</b> — $14,000 refund loop blocked. Steer to recover.");
+    $("flowcard").scrollIntoView({behavior:"smooth",block:"center"});
   });
 
-  /* ── Steer ── */
   $("steerBtn").addEventListener("click", function(){
     if(state.paused){ toast("Pipeline paused — <b>resume</b> before steering."); return; }
-    $("steerEditor").classList.add("show");
+    $("steerEditor").classList.remove("hidden");
     $("steerEditor").scrollIntoView({behavior:"smooth",block:"center"});
-    log("Operator opened inline steer editor.", "");
+    log("Operator opened inline steer editor ([Execute Action / Steer]).", "");
   });
-  $("cancelSteerBtn").addEventListener("click", function(){ $("steerEditor").classList.remove("show"); });
+  $("cancelSteerBtn").addEventListener("click", function(){ $("steerEditor").classList.add("hidden"); });
   $("applyPatchBtn").addEventListener("click", function(){
     var cur=$("fldCurrency").value, reg=$("fldRegion").value, guard=$("fldGuard").value, note=$("fldNote").value;
-    $("steerEditor").classList.remove("show");
-    $("anomalyCard").classList.remove("show");
-    $("resolvedCard").classList.add("show");
-    $("resolvedText").textContent="Currency forced to "+cur+", routing "+reg+", refund-loop guard: "+(guard==="hold"?"Hold + manual approve":guard==="cap"?"Cap at $500":"Off")+". Note: "+(note||"—")+" Workflow resumed on Step 3 with a signed audit entry.";
-    state.flagged=false; state.steered++;
-    $("statSteered").textContent=state.steered;
+    $("steerEditor").classList.add("hidden"); $("anomalyCard").classList.add("hidden"); $("resolvedCard").classList.remove("hidden");
+    $("resolvedText").textContent="Currency forced to "+cur+", routing "+reg+", refund-loop guard: "+(guard==="hold"?"Hold + manual approve":guard==="cap"?"Cap at $500":"Off")+". Note: "+(note||"—")+" Workflow resumed on [Execute Action / Steer] with a signed audit entry.";
+    state.flagged=false; state.steered++; $("statSteered").textContent=state.steered;
     $("lastSteer").textContent=new Date().toTimeString().slice(0,8)+" · "+cur+"/"+reg;
-    setSteps("done","done","done");
-    setStatus("safe","STEERED · SAFE");
-    setAccuracy(98.6);
-    log("PATCH APPLIED: currency="+cur+" region="+reg+" guard="+guard+" — payload released.", "ok");
-    log("Audit entry signed · step 3 Steer/Approve complete · queue flowing.", "ok");
-    beep(880);
-    toast("✓ <b>Steered & resolved</b> — payload released safely. Accuracy 98.6%.");
-    setTimeout(function(){ setSteps("done","active",""); }, 4000);
+    setStep("step1","done"); setStep("step2","done"); setStep("step3","active");
+    setStatus("safe","STEERED · SAFE","bg-[#D4F076] text-[#182215] border border-[#b9d94f]");
+    setAccuracy(94.2);
+    log("PATCH APPLIED: currency="+cur+" region="+reg+" guard="+guard+" — payload released.", "text-[#7be1a3]");
+    log("Audit entry signed · [Execute Action / Steer] complete · 94.2% accuracy · queue flowing.", "text-[#7be1a3]");
+    beep(880); toast("✓ <b>Steered & resolved</b> — payload released safely. Accuracy 94.2%.");
+    setTimeout(function(){ setStep("step3","done"); }, 6000);
   });
 
-  /* ── Pause ── */
   $("pauseBtn").addEventListener("click", function(){
-    state.paused=!state.paused;
-    var b=$("pauseBtn");
+    state.paused=!state.paused; var b=$("pauseBtn");
     if(state.paused){
-      b.textContent="▶ Resume Pipeline"; b.classList.add("is-paused");
-      setStatus("pause","PAUSED BY OPERATOR");
-      log("Pipeline PAUSED by operator — queue held at 1,284.", "w");
+      b.textContent="▶ Resume Pipeline"; b.className="bg-[#FEF3C7] text-[#7a4d0a] border border-[#f2d492] font-semibold px-5 py-2.5 rounded-full transition";
+      setStatus("pause","PAUSED BY OPERATOR","bg-[#F0EFEA] text-[#3F4E40] border border-[#E5E3D8]");
+      log("Pipeline PAUSED by operator — queue held at 1,284.", "text-[#f2c14e]");
       beep(440); toast("❚❚ <b>Paused</b> — queue held. Nothing ships until you resume.");
     } else {
-      b.textContent="❚❚ Pause Pipeline"; b.classList.remove("is-paused");
-      if(state.flagged){ setStatus("flag","DRIFT FLAGGED"); } else { setStatus("live","STEERING LIVE"); }
-      log("Pipeline resumed — queue flowing.", "ok");
+      b.textContent="❚❚ Pause Pipeline"; b.className="bg-white text-[#152016] border border-[#E5E3D8] font-semibold px-5 py-2.5 rounded-full hover:bg-[#F0EFEA] transition";
+      if(state.flagged){ setStatus("flag","DRIFT FLAGGED","bg-[#FEF3C7] text-[#7a4d0a] border border-[#f2d492]"); }
+      else { setStatus("live","STEERING LIVE","bg-[#e6f5ea] text-[#1c6b3a] border border-[#bfe6cb]"); }
+      log("Pipeline resumed — queue flowing.", "text-[#7be1a3]");
       toast("▶ <b>Resumed</b> — queue flowing again.");
     }
   });
 
-  /* mobile menu */
-  $("menuBtn").addEventListener("click", function(){
-    var n=document.querySelector("nav");
-    n.style.display=(n.style.display==="flex")?"none":"flex";
-    n.style.flexDirection="column"; n.style.position="absolute"; n.style.top="64px"; n.style.left="20px"; n.style.right="20px"; n.style.background="#fff"; n.style.border="1px solid #e5e0d3"; n.style.borderRadius="16px"; n.style.padding="10px"; n.style.boxShadow="0 20px 50px rgba(21,32,22,.15)";
-  });
-  window.addEventListener("keydown", function(e){ if(e.key==="d"||e.key==="D"){ $("injectBtn").click(); } });
+  $("menuBtn").addEventListener("click", function(){ $("mobileMenu").classList.toggle("hidden"); });
+  window.addEventListener("keydown", function(e){ if(e.key==="d"||e.key==="D"){ try{ $("injectBtn").click(); }catch(err){} } });
 })();
 </script>
 </body>
