@@ -1,0 +1,9 @@
+Autonomous agents now run your most critical workflows — CRM sync, outreach, billing. The danger is not a crash. It is silent workflow drift: a field changes upstream, and the error ships before anyone notices.
+
+AutoPilot Drift is the remote control bridge for that world. It checks every payload against its live schema contract, detects drift the instant it appears, and hands you the steering wheel — before the damage spreads.
+
+Watch the console. I inject a workflow drift: a mismatched currency field from the EMEA region — euros where dollars were expected. AutoPilot Drift flags it instantly, quarantines the payload, and forecasts a fourteen thousand dollar refund loop downstream.
+
+Now I steer. From the inline editor, I force the currency to dollars, reroute the region, and arm the refund-loop guard. One click applies the patch remotely and releases the payload — with a signed audit entry.
+
+And when I need to stop the world, I pause the pipeline with one tap. That is remote control for autonomous agents: monitor drift, inspect anomalies in real time, and steer runaway workflows before errors ship. One file, zero backend. AutoPilot Drift — automation that keeps you in control.

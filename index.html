@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AutoPilot Drift — Remote Control AI Steering Console</title>
+<meta name="description" content="The remote control bridge for autonomous agent workflows. Monitor drift, inspect anomalies in real-time, and manually steer runaway pipelines before errors ship." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F3EE; --lime:#D4F076; --lime-d:#182215; --forest:#152016;
+    --forest2:#1e2b1f; --card:#ffffff; --line:#e5e0d3; --muted:#6b7161;
+    --amber:#e8a33d; --red:#d64545; --green:#2f9e5f;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--forest);font-family:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+  .serif{font-family:'Fraunces','Newsreader',Georgia,'Times New Roman',serif}
+  ::selection{background:var(--lime);color:var(--lime-d)}
+  a{text-decoration:none;color:inherit}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  /* header */
+  header{position:sticky;top:14px;z-index:50;margin:14px auto 0;max-width:1180px;padding:0 20px}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;background:rgba(255,255,255,.82);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:999px;padding:10px 12px 10px 18px;box-shadow:0 8px 30px rgba(21,32,22,.07)}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:17px;white-space:nowrap}
+  .mark{width:34px;height:34px;border-radius:10px;background:var(--forest);display:grid;place-items:center;color:var(--lime);font-weight:900;font-size:15px;position:relative;overflow:hidden;flex:0 0 auto}
+  .mark::after{content:'';position:absolute;right:-6px;bottom:-8px;width:16px;height:16px;border-radius:50%;background:var(--lime);opacity:.9}
+  .logo small{display:block;font-size:9px;letter-spacing:.22em;color:var(--muted);font-weight:800}
+  nav{display:flex;gap:4px;align-items:center}
+  nav a{font-size:13.5px;font-weight:600;color:#4a5347;padding:8px 13px;border-radius:999px;transition:.2s}
+  nav a:hover{background:#eef0e6;color:var(--forest)}
+  .pill-lime{background:var(--lime);color:var(--lime-d);font-weight:800;font-size:13.5px;padding:11px 18px;border-radius:999px;border:1px solid #b9d94f;box-shadow:0 6px 20px rgba(212,240,118,.5);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+  .pill-lime:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(212,240,118,.65)}
+  .pill-dark{background:var(--forest);color:#fff;font-weight:800;font-size:14px;padding:14px 24px;border-radius:999px;border:1px solid var(--forest);display:inline-flex;align-items:center;gap:8px;box-shadow:0 12px 30px rgba(21,32,22,.22)}
+  .pill-dark:hover{transform:translateY(-2px)}
+  .pill-outline{background:transparent;color:var(--forest);font-weight:800;font-size:14px;padding:14px 24px;border-radius:999px;border:1.5px solid #c9cdbd;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.6)}
+  .pill-outline:hover{border-color:var(--forest);background:#fff}
+  .burger{display:none;background:#fff;border:1px solid var(--line);border-radius:999px;width:38px;height:38px}
+  /* hero */
+  .hero{text-align:center;padding:52px 0 28px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:12px;font-weight:800;letter-spacing:.06em;color:#3d463a;box-shadow:0 4px 16px rgba(21,32,22,.05)}
+  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--green);position:relative}
+  .eyebrow .dot::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid rgba(47,158,95,.4);animation:ping 1.8s ease-out infinite}
+  @keyframes ping{0%{transform:scale(.6);opacity:1}80%,100%{transform:scale(1.5);opacity:0}}
+  h1{font-family:'Fraunces','Newsreader',Georgia,serif;font-weight:600;font-size:clamp(38px,6vw,68px);line-height:.98;letter-spacing:-.02em;margin:22px auto 0;max-width:900px}
+  h1 em{font-style:italic;font-weight:500}
+  h1 .lime-mark{background:linear-gradient(transparent 62%,var(--lime) 62%);padding:0 6px}
+  .sub{max-width:720px;margin:20px auto 0;color:#55604f;font-size:clamp(15px,2vw,17.5px);line-height:1.65}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+  /* flowcard */
+  .console-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:18px;margin:34px 0 10px}
+  @media(max-width:900px){.console-grid{grid-template-columns:1fr} nav{display:none} .burger{display:grid;place-items:center}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:0 24px 60px rgba(21,32,22,.09);padding:22px}
+  .card-dark{background:var(--forest);color:#eef0e6;border:1px solid #2a3a2d;border-radius:24px;box-shadow:0 24px 60px rgba(21,32,22,.25);padding:22px}
+  .card-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .card-h .t{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+  .card-dark .card-h .t{color:#9aa78f}
+  .card-h h3{font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;margin:6px 0 0;line-height:1.15}
+  .status{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.08em;padding:7px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:7px}
+  .status::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+  .st-live{background:#e6f5ea;color:#1c6b3a;border:1px solid #bfe6cb}
+  .st-flag{background:#fdf0d5;color:#8a5b12;border:1px solid #f2d492}
+  .st-pause{background:#eef0e6;color:#55604f;border:1px solid #dfe2d2}
+  .st-safe{background:var(--lime);color:var(--lime-d);border:1px solid #b9d94f}
+  .steps{display:flex;align-items:center;gap:0;margin:20px 0 6px}
+  .step{flex:1;text-align:center;position:relative;padding-top:34px;font-size:12px;font-weight:800;color:#8a9079}
+  .step::before{content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:#eef0e6;border:2px solid #d8dcce}
+  .step::after{content:attr(data-i);position:absolute;top:17px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:900;color:#8a9079}
+  .step.active{color:var(--forest)} .step.active::before{background:var(--lime);border-color:#b9d94f} .step.active::after{color:var(--lime-d)}
+  .step.flag{color:#8a5b12} .step.flag::before{background:#fdf0d5;border-color:var(--amber);box-shadow:0 0 0 6px rgba(232,163,61,.18)} .step.flag::after{content:'!';color:#8a5b12}
+  .step.done{color:#1c6b3a} .step.done::before{background:#2f9e5f;border-color:#2f9e5f} .step.done::after{content:'✓';color:#fff}
+  .step-line{height:2px;background:#e5e0d3;margin:0 4px 18px;flex:0 0 26px;border-radius:2px}
+  .anomaly{display:none;margin-top:16px;background:#fff8ec;border:1.5px solid #f2d492;border-left:5px solid var(--amber);border-radius:14px;padding:14px 16px}
+  .anomaly.show{display:block;animation:slideIn .5s cubic-bezier(.21,1.02,.73,1) both}
+  .anomaly b{font-size:13.5px;color:#7a4d0a}
+  .anomaly p{margin:6px 0 0;font-size:13.5px;line-height:1.55;color:#6b5322}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  .btn{font-size:13.5px;font-weight:800;padding:12px 18px;border-radius:999px;border:1.5px solid transparent;display:inline-flex;align-items:center;gap:7px;transition:.2s}
+  .btn:active{transform:scale(.97)}
+  .btn-drift{background:var(--lime);color:var(--lime-d);border-color:#b9d94f}
+  .btn-drift:hover{transform:translateY(-1px)}
+  .btn-steer{background:var(--forest);color:#fff}
+  .btn-steer:hover{background:#233723}
+  .btn-pause{background:#fff;color:var(--forest);border-color:#c9cdbd}
+  .btn-pause.is-paused{background:#fdf0d5;border-color:#f2d492;color:#8a5b12}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .editor{display:none;margin-top:16px;background:#fbfaf5;border:1.5px dashed #cfd4bc;border-radius:14px;padding:16px}
+  .editor.show{display:block;animation:slideIn .45s both}
+  .editor h4{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#55604f}
+  .fld{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:560px){.fld{grid-template-columns:1fr}}
+  .fld label{font-size:11px;font-weight:800;letter-spacing:.06em;color:#8a9079;text-transform:uppercase}
+  .fld select,.fld input{width:100%;margin-top:5px;padding:11px 12px;border-radius:10px;border:1.5px solid #d8dcce;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:var(--forest)}
+  .fld select:focus,.fld input:focus{outline:2px solid var(--lime);border-color:#b9d94f}
+  .resolved{display:none;margin-top:16px;background:#f0f9f1;border:1.5px solid #bfe6cb;border-left:5px solid var(--green);border-radius:14px;padding:14px 16px}
+  .resolved.show{display:block;animation:slideIn .5s both}
+  .resolved b{color:#1c6b3a;font-size:13.5px}
+  .resolved p{margin:6px 0 0;font-size:13.5px;color:#3d5a44;line-height:1.55}
+  .metric-top{display:flex;align-items:baseline;justify-content:space-between}
+  .metric-big{font-family:'Fraunces',Georgia,serif;font-size:44px;font-weight:700;letter-spacing:-.02em}
+  .metric-big small{font-size:16px;color:var(--muted)}
+  .bar{height:12px;background:#e9ebe0;border-radius:999px;overflow:hidden;margin-top:10px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#b9d94f,var(--lime));border-radius:999px;width:94.2%;transition:width .8s cubic-bezier(.21,1.02,.73,1)}
+  .bar.warn i{background:linear-gradient(90deg,#e8a33d,#f2c14e)}
+  .kv{display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px dashed #e5e0d3;color:#55604f}
+  .kv b{color:var(--forest)}
+  .log{margin-top:14px;background:#101b12;border:1px solid #2a3a2d;border-radius:14px;padding:14px;min-height:150px;max-height:190px;overflow:hidden;font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.7;color:#cfe6b8}
+  .log .ts{color:#7d8f76}.log .w{color:#f2c14e}.log .ok{color:#7be1a3}.log .err{color:#f28b8b}
+  .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+  .stat{background:#fbfaf5;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+  .stat b{font-family:'Fraunces',Georgia,serif;font-size:24px;display:block}
+  .stat span{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+  /* sections */
+  section.blk{padding:64px 0 10px}
+  .sec-h{font-family:'Fraunces',Georgia,serif;font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-.02em;margin:0;max-width:700px;line-height:1.05}
+  .sec-sub{color:#55604f;line-height:1.65;max-width:640px;margin-top:12px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:26px}
+  @media(max-width:900px){.grid3,.grid2{grid-template-columns:1fr}}
+  .feat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;transition:.3s}
+  .feat:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(21,32,22,.1)}
+  .feat .ico{width:44px;height:44px;border-radius:13px;background:var(--forest);color:var(--lime);display:grid;place-items:center;font-size:20px}
+  .feat h4{font-family:'Fraunces',Georgia,serif;font-size:19px;margin:14px 0 6px;font-weight:600}
+  .feat p{margin:0;font-size:14px;line-height:1.6;color:#55604f}
+  .feat .tag{font-size:11px;font-weight:800;letter-spacing:.08em;color:#8a5b12;background:#fdf0d5;border-radius:999px;padding:4px 9px;display:inline-block;margin-top:12px}
+  .int{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
+  .int .dot2{width:40px;height:40px;border-radius:12px;background:#eef0e6;display:grid;place-items:center;font-size:18px;flex:0 0 auto}
+  .int b{font-size:14.5px}.int span{font-size:12.5px;color:var(--muted);display:block;margin-top:2px}
+  .int .on{margin-left:auto;font-size:11px;font-weight:800;color:#1c6b3a;background:#e6f5ea;border-radius:999px;padding:5px 10px;white-space:nowrap}
+  footer{margin:70px 0 30px;background:var(--forest);color:#eef0e6;border-radius:28px;padding:40px 30px;text-align:center}
+  footer h3{font-family:'Fraunces',Georgia,serif;font-size:clamp(26px,4vw,38px);font-weight:600;margin:0 0 10px}
+  footer p{color:#9aa78f;line-height:1.65;max-width:560px;margin:0 auto 22px;font-size:14.5px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,80px);background:var(--forest);color:#fff;font-size:13.5px;font-weight:700;padding:13px 20px;border-radius:999px;box-shadow:0 20px 50px rgba(21,32,22,.4);transition:.4s;z-index:100;opacity:0}
+  .toast.show{transform:translate(-50%,0);opacity:1}
+  .toast b{color:var(--lime)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="#top" class="logo">
+      <span class="mark">◍</span>
+      <span>AutoPilot <span style="color:#5a8a1a">Drift</span><small>REMOTE CONTROL AI</small></span>
+    </a>
+    <nav aria-label="Primary">
+      <a href="#workflow">Workflow</a>
+      <a href="#monitoring">Monitoring</a>
+      <a href="#insights">AI Insights</a>
+      <a href="#integrations">Integrations</a>
+    </nav>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a href="#console" class="pill-lime">⟡ Launch Remote Console</a>
+      <button class="burger" id="menuBtn" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<div id="top" class="wrap hero">
+  <div class="eyebrow"><span class="dot"></span> ⚡ NEW: LIVE AGENT STEERING ENGINE &nbsp;•&nbsp; REMOTE CONTROL AI 2026</div>
+  <h1>Automation that keeps modern teams <em>in <span class="lime-mark">control</span></em></h1>
+  <p class="sub">The remote control bridge for autonomous agent workflows. Monitor drift, inspect anomalies in real-time, and manually steer runaway pipelines before errors ship.</p>
+  <div class="cta">
+    <a href="#console" class="pill-dark">▸ Open Live Console</a>
+    <a href="#workflow" class="pill-outline">▶ Watch Pipeline Demo</a>
+  </div>
+</div>
+
+<!-- ═══════════ CONSOLE ═══════════ -->
+<div class="wrap" id="console">
+  <div class="console-grid">
+    <!-- flowcard -->
+    <div class="card" id="flowcard">
+      <div class="card-h">
+        <div>
+          <div class="t">Live Flowcard · Remote Control</div>
+          <h3>Active Workflow: Enterprise CRM Sync &amp; Outreach Agent</h3>
+        </div>
+        <span class="status st-live" id="statusBadge">● STEERING LIVE</span>
+      </div>
+
+      <div class="steps" aria-label="Pipeline steps">
+        <div class="step done" id="step1" data-i="1">Check Payload</div>
+        <div class="step-line"></div>
+        <div class="step active" id="step2" data-i="2">Detect Drift</div>
+        <div class="step-line"></div>
+        <div class="step" id="step3" data-i="3">Steer / Approve</div>
+      </div>
+
+      <div class="anomaly" id="anomalyCard" role="alert">
+        <b>⚠ Drift detected — EMEA webhook · 0.4s ago</b>
+        <p>Mismatched currency field in webhook from EMEA region — <b>USD expected, EUR received</b>. Downstream: potential <b>$14,000 refund loop</b> in the CRM outreach leg. Payload quarantined before write.</p>
+      </div>
+
+      <div class="editor" id="steerEditor">
+        <h4>Steer Payload — inline remote patch</h4>
+        <div class="fld">
+          <div><label>Currency code</label>
+            <select id="fldCurrency"><option value="EUR">EUR (keep incoming)</option><option value="USD" selected>USD (force expected)</option><option value="GBP">GBP</option></select></div>
+          <div><label>Region / routing</label>
+            <select id="fldRegion"><option value="EMEA">EMEA → EU-Central</option><option value="AMER" selected>AMER → US-East</option><option value="APAC">APAC → SG</option></select></div>
+          <div><label>Refund-loop guard</label>
+            <select id="fldGuard"><option value="hold" selected>Hold + manual approve</option><option value="cap">Cap at $500</option><option value="off">Off</option></select></div>
+          <div><label>Operator note</label>
+            <input id="fldNote" value="Patch: currency verified vs. invoice #INV-8841" /></div>
+        </div>
+        <div class="controls">
+          <button class="btn btn-steer" id="applyPatchBtn" type="button">✓ Apply Patch &amp; Release</button>
+          <button class="btn btn-pause" id="cancelSteerBtn" type="button">Cancel</button>
+        </div>
+      </div>
+
+      <div class="resolved" id="resolvedCard">
+        <b>✓ Steered &amp; resolved — payload released safely</b>
+        <p id="resolvedText">Currency forced to USD, routing held for manual approve, refund-loop guard armed. Workflow resumed on Step 3 with a signed audit entry.</p>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-drift" id="injectBtn" type="button">⚡ Inject Workflow Drift</button>
+        <button class="btn btn-steer" id="steerBtn" type="button">⟡ Steer Payload</button>
+        <button class="btn btn-pause" id="pauseBtn" type="button">❚❚ Pause Pipeline</button>
+      </div>
+    </div>
+
+    <!-- metrics + live log -->
+    <div class="card-dark" id="metricsCard">
+      <div class="card-h">
+        <div><div class="t">Autonomous Accuracy</div><div class="metric-big" id="metricVal">94.2<small>%</small></div></div>
+        <span class="status st-live" id="queueBadge">● QUEUE: 1,284 · FLOWING</span>
+      </div>
+      <div class="bar" id="barWrap"><i id="accBar"></i></div>
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#9aa78f;margin-top:6px"><span>Live accuracy (24h rolling)</span><span id="barPct">94.2% autonomous</span></div>
+
+      <div class="stats-row">
+        <div class="stat" style="background:#1e2b1f;border-color:#2a3a2d"><b id="statInjected">0</b><span style="color:#9aa78f">Drifts injected</span></div>
+        <div class="stat" style="background:#1e2b1f;border-color:#2a3a2d"><b id="statSteered">0</b><span style="color:#9aa78f">Steered safely</span></div>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="kv"><span>Agent</span><b>crm-sync/outreach-v4</b></div>
+        <div class="kv"><span>Last steer</span><b id="lastSteer">— none yet</b></div>
+        <div class="kv"><span>Median steer latency</span><b>0.4s</b></div>
+        <div class="kv"><span>Audit trail</span><b>Signed · append-only</b></div>
+      </div>
+
+      <div class="log" id="logFeed" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ WORKFLOW ═══════════ -->
+<section class="wrap blk" id="workflow">
+  <h2 class="sec-h">One flowcard. Full remote control of every run.</h2>
+  <p class="sec-sub">Agents drift silently — a field changes upstream, a region returns a new shape, a webhook starts sending euros where dollars were expected. AutoPilot Drift surfaces that drift the instant it appears and hands you the steering wheel.</p>
+  <div class="grid3">
+    <div class="feat"><div class="ico">◈</div><h4>Check Payload</h4><p>Every payload is validated against its live schema contract on arrival. Unknown fields, flipped currencies, and shape changes are flagged before they touch your systems.</p><span class="tag">200ms median check</span></div>
+    <div class="feat"><div class="ico">◎</div><h4>Detect Drift</h4><p>Anomaly scoring watches for silent schema and semantic drift across regions and agents — like the EMEA currency mismatch that could spin a $14,000 refund loop.</p><span class="tag">Flagged, never silent</span></div>
+    <div class="feat"><div class="ico">⟡</div><h4>Steer / Approve</h4><p>Patch the parameter remotely from the inline editor, hold the queue, or approve with a signed audit entry. Humans stay in the loop; the agent keeps moving.</p><span class="tag">Inline editor · audit-signed</span></div>
+  </div>
+</section>
+
+<!-- ═══════════ MONITORING ═══════════ -->
+<section class="wrap blk" id="monitoring">
+  <h2 class="sec-h">Monitoring that sees drift before customers do.</h2>
+  <p class="sec-sub">Sit on top of the live console above: queue depth, autonomous accuracy, and a streaming event log update in real time as you inject drift, steer, and pause.</p>
+  <div class="grid2">
+    <div class="feat"><div class="ico">⌁</div><h4>Live accuracy ticker</h4><p>The 94.2% autonomous accuracy bar dips on drift and recovers on steer — so the cost of every anomaly is visible in one glance.</p><span class="tag" id="monTick">94.2% now</span></div>
+    <div class="feat"><div class="ico">≋</div><h4>Streaming event log</h4><p>Every inject, flag, patch, and pause lands in the console log with a timestamp and severity — no SSH, no tailing journals by hand.</p><span class="tag">Zero backend · file://</span></div>
+  </div>
+</section>
+
+<!-- ═══════════ AI INSIGHTS ═══════════ -->
+<section class="wrap blk" id="insights">
+  <h2 class="sec-h">AI insights that explain the drift, not just alert on it.</h2>
+  <p class="sec-sub">When a payload is quarantined, the insight panel tells you what changed, where it likely came from, and what it would have broken downstream — before you decide how to steer.</p>
+  <div class="grid3">
+    <div class="feat"><div class="ico">⌗</div><h4>What changed</h4><p>Field-level diff: currency EUR ≠ expected USD, plus region and shape deltas vs. the last 10,000 clean payloads.</p><span class="tag">Field-level diff</span></div>
+    <div class="feat"><div class="ico">➤</div><h4>Blast radius</h4><p>Downstream impact forecast: CRM outreach leg, refund workflow, and the $14,000 loop that would have shipped.</p><span class="tag">$14k loop forecast</span></div>
+    <div class="feat"><div class="ico">✎</div><h4>Suggested patch</h4><p>One-click steering presets: force expected currency, reroute region, arm the refund guard — then release.</p><span class="tag">1-click steer</span></div>
+  </div>
+</section>
+
+<!-- ═══════════ INTEGRATIONS ═══════════ -->
+<section class="wrap blk" id="integrations">
+  <h2 class="sec-h">Drops into your stack in minutes.</h2>
+  <p class="sec-sub">Single-file console, no backend to host. Point your agents' webhooks at the bridge and steer from any browser.</p>
+  <div class="grid2">
+    <div class="int"><div class="dot2">⬡</div><div><b>Webhook bridge</b><span>Any agent framework, HTTP in</span></div><span class="on">● CONNECTED</span></div>
+    <div class="int"><div class="dot2">▦</div><div><b>CRM sync (Salesforce / HubSpot)</b><span>Outreach leg with refund guard</span></div><span class="on">● CONNECTED</span></div>
+    <div class="int"><div class="dot2">✉</div><div><b>Outreach &amp; billing</b><span>Currency-safe send path</span></div><span class="on">● CONNECTED</span></div>
+    <div class="int"><div class="dot2">◷</div><div><b>Signed audit log</b><span>Append-only, exportable evidence</span></div><span class="on">● SIGNED</span></div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <h3>Steer the agent. Before the drift ships.</h3>
+  <p>One file, zero backend. Double-click <b style="color:#D4F076">index.html</b> and inject your first drift in ten seconds — then steer, pause, and release it yourself.</p>
+  <a href="#console" class="pill-lime">⟡ Launch Remote Console</a>
+  <div style="margin-top:18px;font-size:12px;color:#7d8f76">AutoPilot Drift · Remote Control AI Hackathon 2026 · Single-file, zero-backend demo</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var state = { mode:"live", accuracy:94.2, injected:0, steered:0, paused:false, flagged:false };
+  var $ = function(id){ return document.getElementById(id); };
+  var logEl = $("logFeed");
+  function ts(){ var d=new Date(); return d.toTimeString().slice(0,8); }
+  function log(msg, cls){
+    var div=document.createElement("div");
+    div.innerHTML='<span class="ts">'+ts()+'</span> ';
+    var s=document.createElement("span"); if(cls) s.className=cls; s.textContent=msg;
+    div.appendChild(s); logEl.appendChild(div);
+    while(logEl.children.length>24) logEl.removeChild(logEl.firstChild);
+    logEl.scrollTop=logEl.scrollHeight;
+  }
+  function toast(html){ var t=$("toast"); t.innerHTML=html; t.classList.add("show"); clearTimeout(t._x); t._x=setTimeout(function(){t.classList.remove("show");},3200); }
+  function beep(f){ try{ var AC=window.AudioContext||window.webkitAudioContext; var ac=new AC(); var o=ac.createOscillator(),g=ac.createGain(); o.frequency.value=f||660; o.type="sine"; g.gain.value=0.06; o.connect(g); g.connect(ac.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+0.35); o.stop(ac.currentTime+0.36);}catch(e){} }
+  function setAccuracy(v){
+    state.accuracy=Math.round(v*10)/10;
+    $("metricVal").innerHTML=state.accuracy.toFixed(1)+"<small>%</small>";
+    $("accBar").style.width=state.accuracy+"%";
+    $("barPct").textContent=state.accuracy.toFixed(1)+"% autonomous";
+    $("monTick").textContent=state.accuracy.toFixed(1)+"% now";
+    var warn=$("barWrap"); if(state.accuracy<90){warn.classList.add("warn");}else{warn.classList.remove("warn");}
+  }
+  function setStatus(mode, label){
+    var b=$("statusBadge"); b.className="status "+(mode==="flag"?"st-flag":mode==="pause"?"st-pause":mode==="safe"?"st-safe":"st-live");
+    b.textContent="● "+label;
+    var q=$("queueBadge");
+    if(mode==="pause"){ q.className="status st-pause"; q.textContent="❚❚ QUEUE: HALTED BY OPERATOR"; }
+    else if(mode==="flag"){ q.className="status st-flag"; q.textContent="⚠ QUARANTINED · AWAITING STEER"; }
+    else if(mode==="safe"){ q.className="status st-safe"; q.textContent="✓ QUEUE: 1,284 · FLOWING"; }
+    else { q.className="status st-live"; q.textContent="● QUEUE: 1,284 · FLOWING"; }
+  }
+  function setSteps(s1,s2,s3){ ["step1","step2","step3"].forEach(function(id,i){ var el=$(id); var c=[s1,s2,s3][i]; el.className="step "+(c||""); }); }
+  log("AutoPilot Drift console online — file:// mode, zero backend.", "");
+  log("Agent crm-sync/outreach-v4 connected · schema contract v12 loaded.", "ok");
+  log("Watching 1,284 queued payloads · accuracy 94.2%.", "");
+
+  var cadences=["payload OK · CRM contact upsert · 200ms","webhook verified · AMER region · USD","outreach leg sent · 1 msg · guard clean","payload OK · invoice sync · EUR→USD normalized","heartbeat · agent healthy · 0 drift"];
+  var ci=0;
+  setInterval(function(){
+    if(state.paused) return;
+    if(state.flagged) return;
+    log(cadences[ci%cadences.length], ""); ci++;
+  }, 2600);
+
+  /* ── Inject drift ── */
+  $("injectBtn").addEventListener("click", function(){
+    if(state.flagged){ toast("Drift already flagged — <b>steer or resolve</b> it first."); return; }
+    if(state.paused){ toast("Pipeline is paused — <b>resume</b> to inject drift."); return; }
+    state.flagged=true; state.injected++;
+    $("statInjected").textContent=state.injected;
+    $("anomalyCard").classList.add("show");
+    $("resolvedCard").classList.remove("show");
+    setSteps("done","flag","");
+    setStatus("flag","DRIFT FLAGGED");
+    setAccuracy(78.4);
+    log("DRIFT: currency mismatch EUR≠USD · EMEA webhook · payload quarantined.", "err");
+    log("Impact: potential $14,000 refund loop downstream — write blocked.", "w");
+    beep(520);
+    toast("⚠ <b>Drift flagged</b> — $14,000 refund loop blocked. Steer to recover.");
+    document.getElementById("flowcard").scrollIntoView({behavior:"smooth",block:"center"});
+  });
+
+  /* ── Steer ── */
+  $("steerBtn").addEventListener("click", function(){
+    if(state.paused){ toast("Pipeline paused — <b>resume</b> before steering."); return; }
+    $("steerEditor").classList.add("show");
+    $("steerEditor").scrollIntoView({behavior:"smooth",block:"center"});
+    log("Operator opened inline steer editor.", "");
+  });
+  $("cancelSteerBtn").addEventListener("click", function(){ $("steerEditor").classList.remove("show"); });
+  $("applyPatchBtn").addEventListener("click", function(){
+    var cur=$("fldCurrency").value, reg=$("fldRegion").value, guard=$("fldGuard").value, note=$("fldNote").value;
+    $("steerEditor").classList.remove("show");
+    $("anomalyCard").classList.remove("show");
+    $("resolvedCard").classList.add("show");
+    $("resolvedText").textContent="Currency forced to "+cur+", routing "+reg+", refund-loop guard: "+(guard==="hold"?"Hold + manual approve":guard==="cap"?"Cap at $500":"Off")+". Note: "+(note||"—")+" Workflow resumed on Step 3 with a signed audit entry.";
+    state.flagged=false; state.steered++;
+    $("statSteered").textContent=state.steered;
+    $("lastSteer").textContent=new Date().toTimeString().slice(0,8)+" · "+cur+"/"+reg;
+    setSteps("done","done","done");
+    setStatus("safe","STEERED · SAFE");
+    setAccuracy(98.6);
+    log("PATCH APPLIED: currency="+cur+" region="+reg+" guard="+guard+" — payload released.", "ok");
+    log("Audit entry signed · step 3 Steer/Approve complete · queue flowing.", "ok");
+    beep(880);
+    toast("✓ <b>Steered & resolved</b> — payload released safely. Accuracy 98.6%.");
+    setTimeout(function(){ setSteps("done","active",""); }, 4000);
+  });
+
+  /* ── Pause ── */
+  $("pauseBtn").addEventListener("click", function(){
+    state.paused=!state.paused;
+    var b=$("pauseBtn");
+    if(state.paused){
+      b.textContent="▶ Resume Pipeline"; b.classList.add("is-paused");
+      setStatus("pause","PAUSED BY OPERATOR");
+      log("Pipeline PAUSED by operator — queue held at 1,284.", "w");
+      beep(440); toast("❚❚ <b>Paused</b> — queue held. Nothing ships until you resume.");
+    } else {
+      b.textContent="❚❚ Pause Pipeline"; b.classList.remove("is-paused");
+      if(state.flagged){ setStatus("flag","DRIFT FLAGGED"); } else { setStatus("live","STEERING LIVE"); }
+      log("Pipeline resumed — queue flowing.", "ok");
+      toast("▶ <b>Resumed</b> — queue flowing again.");
+    }
+  });
+
+  /* mobile menu */
+  $("menuBtn").addEventListener("click", function(){
+    var n=document.querySelector("nav");
+    n.style.display=(n.style.display==="flex")?"none":"flex";
+    n.style.flexDirection="column"; n.style.position="absolute"; n.style.top="64px"; n.style.left="20px"; n.style.right="20px"; n.style.background="#fff"; n.style.border="1px solid #e5e0d3"; n.style.borderRadius="16px"; n.style.padding="10px"; n.style.boxShadow="0 20px 50px rgba(21,32,22,.15)";
+  });
+  window.addEventListener("keydown", function(e){ if(e.key==="d"||e.key==="D"){ $("injectBtn").click(); } });
+})();
+</script>
+</body>
+</html>

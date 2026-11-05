@@ -1,0 +1,4 @@
+video-tmp/
+demo_padded.mp4
+__pycache__/
+*.pyc
